@@ -1,0 +1,20 @@
+name: "Setup project"
+description: "Setup checkout, mise, cache and install dependencies"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v6.0.0
+
+    - uses: jdx/mise-action@v3
+
+    - name: Cache pnpm store
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/pnpm/store
+        key: pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile

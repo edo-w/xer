@@ -18,6 +18,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6.0.0
+
       - uses: ./github/actions/setup
 
       - name: Create PR / Publish Release

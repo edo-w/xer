@@ -22,6 +22,12 @@ jobs:
 
       - uses: ./.github/actions/setup
 
+      - name: Build project
+        run: pnpm build
+
+      - name: Run tests
+        run: pnpm test
+
       - name: Create PR / Publish Release
         uses: changesets/action@v1.5.3
         with:

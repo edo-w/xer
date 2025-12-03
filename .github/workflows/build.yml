@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.0
 
-      - uses: ./github/actions/setup
+      - uses: ./.github/actions/setup
 
       - name: Build project
         run: pnpm build

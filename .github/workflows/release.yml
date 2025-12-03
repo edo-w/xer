@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.0
 
-      - uses: ./github/actions/setup
+      - uses: ./.github/actions/setup
 
       - name: Create PR / Publish Release
         uses: changesets/action@v1.5.3

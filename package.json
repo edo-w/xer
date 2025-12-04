@@ -1,6 +1,6 @@
 {
   "name": "@edo-w/xer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "XER is a typescript library for creating structured errors and enchanting error handling.",
   "repository": {
     "type": "git",

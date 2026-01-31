@@ -1,5 +1,5 @@
 name: "Setup project"
-description: "Setup checkout, mise, cache and install dependencies"
+description: "Setup runner environment"
 
 runs:
   using: "composite"

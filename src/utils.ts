@@ -1,21 +1,21 @@
-import { ErrorData } from './types.js';
+import { ErrorData, ErrorDetail } from './types.js';
 import { XError } from './xerror.js';
 
 /**
- * Get error properties from a Error object excluding name, message and stack.
+ * Get error details from a Error object excluding name, message and stack.
  * @param error error object
- * @returns object with error properties or undefined if none
+ * @returns object with error detail or undefined
  */
-export function getErrorProperties(error?: unknown): Record<string, any> | undefined {
+export function getErrorDetail(error?: unknown): ErrorDetail | undefined {
 	if (error === null || error == undefined) {
 		return undefined;
 	}
 
 	if (error instanceof XError) {
-		return error.properties;
+		return error.detail;
 	}
 
-	let properties: any;
+	let detail: any;
 	for (const [key, value] of Object.entries(error)) {
 		const skip = key === 'name'
 			|| key === 'message'
@@ -25,38 +25,35 @@ export function getErrorProperties(error?: unknown): Record<string, any> | undef
 			continue;
 		}
 
-		if (!properties) {
-			properties = {};
-		}
-
-		properties[key] = value;
+		detail = detail ?? {};
+		detail[key] = value;
 	}
 
-	return properties;
+	return detail;
 }
 
 /**
- * Creates a copy of the Error object as a {@link ErrorData} object.
+ * Creates a copy of the Error instance as a {@link ErrorData} object.
  * @param error error instance
  * @returns error data object
  */
-export function toErrorData(error: Error | unknown): ErrorData {
-	const _error = error as any;
-	const name = _error?.name ?? '';
-	const message = _error?.message ?? '';
-	const stack = _error?.stack?.split('\n') ?? [];
+export function getErrorData(error: Error | unknown): ErrorData {
+	const errorRaw = error as any;
+	const name = errorRaw.name ?? '';
+	const message = errorRaw.message ?? '';
+	const stack = errorRaw.stack?.split('\n') ?? [];
 
-	const info: any = error instanceof XError ? error.properties : getErrorProperties(error);
+	const detail = error instanceof XError ? error.detail : getErrorDetail(error);
 	const retryable = error instanceof XError ? error.retryable : true;
-	const cause = _error.cause ? toErrorData(_error.cause) : undefined;
-	const id = _error.id;
-	const time = _error.time ?? new Date();
+	const cause = errorRaw.cause ? getErrorData(errorRaw.cause) : undefined;
+	const id = errorRaw.id;
+	const time = errorRaw.time ?? new Date();
 
 	return {
 		name,
 		message,
 		stack,
-		properties: info,
+		detail,
 		cause,
 		id,
 		time,
@@ -78,35 +75,35 @@ export function isErrorType<TType extends Error | unknown>(error: unknown | unde
 	return error instanceof (type as any);
 }
 /**
-  * Creates an error instance with the given name, message and optional properties
+  * Creates an error instance with the given name, message and optional detail
   * and formatted message.
   * @param name error name
   * @param message error reason
-  * @param properties error properties
+  * @param detail error detail
   * @returns error instance
   */
-export function formattedError(name: string, message: string, properties?: Record<string, any>): Error {
+export function formattedError(name: string, message: string, detail?: ErrorDetail): Error {
 	let fields: string | undefined;
-	if (properties) {
-		fields = Object.entries(properties).map(([k, v]) => `${k}=${v}`).join(', ');
+	if (detail) {
+		fields = Object.entries(detail).map(([k, v]) => `${k}=${v}`).join(', ');
 		message = `${message}. ${fields}`;
 	}
 
 	const error = new Error(message);
 	error.name = name;
-	(error as any).properties = properties;
+	(error as any).detail = detail;
 
 	return error;
 }
 
 /**
  * Creates a formatted error message joining the message parts, along with a
- * list of key value pairs passed in the properties.
+ * list of key value pairs passed in the detail.
  * @param message message parts
- * @param properties message properties
+ * @param detail error details
  * @returns message text
  */
-export function messageFormat(message: string | string[], properties?: Record<string, any>): string {
+export function messageFormat(message: string | string[], detail?: ErrorDetail): string {
 	let text = '';
 	if (Array.isArray(message)) {
 		text = message.join(' ');
@@ -116,8 +113,8 @@ export function messageFormat(message: string | string[], properties?: Record<st
 	}
 
 	let fields: string | undefined;
-	if (properties) {
-		fields = Object.entries(properties).map(([k, v]) => `${k}=${v}`).join(', ');
+	if (detail) {
+		fields = Object.entries(detail).map(([k, v]) => `${k}=${v}`).join(', ');
 		text = `${text}. ${fields}`;
 	}
 

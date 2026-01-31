@@ -1,14 +1,14 @@
-import { ErrorData } from './types.js';
-import { isErrorType, toErrorData } from './utils.js';
+import { ErrorData, ErrorDetail } from './types.js';
+import { getErrorData, isErrorType } from './utils.js';
 
 /**
  * Base class for "X" structure errors.
  * XError can be extended to create custom error types with additional metadata
  * that helps understand and troubleshoot errors.
  *
- * @typeParam TProps - Type of additional error properties
+ * @typeParam TDetail - Type of the error detail object.
  */
-export class XError<TProps extends object = Record<string, any>> extends Error {
+export class XError<TDetail extends ErrorDetail = ErrorDetail> extends Error {
 	/**
 	 * Error ID
 	 */
@@ -30,23 +30,23 @@ export class XError<TProps extends object = Record<string, any>> extends Error {
 	code?: string;
 
 	/**
-	 * Additional error properties
+	 * Additional error information
 	 */
-	properties?: TProps;
+	detail?: TDetail;
 
 	/**
 	 * Error retryable flag. Use to indicate if the operation that caused
 	 * the error can be retried.
-	 * @default true
+	 * @default false
 	 */
 	retryable: boolean;
 
 	/**
-	 * Creates an XError instance with message and properties.
+	 * Creates an XError instance with message and details.
 	 * @param message error message
-	 * @param properties error properties
+	 * @param detail error detail
 	 */
-	constructor(message?: string, properties?: TProps) {
+	constructor(message?: string, detail?: TDetail) {
 		super(message);
 		Object.setPrototypeOf(this, new.target.prototype);
 
@@ -59,26 +59,26 @@ export class XError<TProps extends object = Record<string, any>> extends Error {
 			(Error as any).captureStackTrace(this, this.constructor);
 		}
 
-		this.properties = properties;
-		this.retryable = true;
+		this.detail = detail;
+		this.retryable = false;
 		this.time = new Date();
 	}
 
 	/**
-	 * Returns a copy of this instance as an {@link ErrorData} DTO.
+	 * Returns a copy of this instance as an {@link ErrorData} object.
 	 * @returns {ErrorData} object
 	 */
-	toData(): ErrorData {
-		return toErrorData(this);
+	getData(): ErrorData {
+		return getErrorData(this);
 	}
 
 	/**
-	 * Returns a copy of this instance as an {@link ErrorData} DTO.
+	 * Returns a copy of this instance as an {@link ErrorData} object.
 	 * This method is called automatically when JSON.stringify() is called.
 	 * @returns {ErrorData} object
 	 */
 	toJSON(): ErrorData {
-		return this.toData();
+		return this.getData();
 	}
 
 	/**
@@ -86,7 +86,7 @@ export class XError<TProps extends object = Record<string, any>> extends Error {
 	 * @param type error type
 	 * @returns true if same, false otherwise
 	 */
-	isType<TType extends Error | unknown>(type: TType): this is TType {
+	is<TType extends Error | unknown>(type: TType): this is TType {
 		return isErrorType(this, type);
 	}
 
@@ -131,12 +131,12 @@ export class XError<TProps extends object = Record<string, any>> extends Error {
 	}
 
 	/**
-	 * Sets error properties
-	 * @param properties error properties
+	 * Sets error detail
+	 * @param detail error detail
 	 * @returns this instance
 	 */
-	setProperties(properties: TProps): this {
-		this.properties = properties;
+	setDetail(detail: TDetail): this {
+		this.detail = detail;
 		return this;
 	}
 

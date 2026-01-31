@@ -3,8 +3,8 @@ import { ErrorData } from '~/types.js';
 import { XError } from '~/xerror.js';
 
 class TestError extends XError {
-	constructor(message?: string, properties?: any) {
-		super(message ?? 'test error', properties);
+	constructor(message?: string, detail?: any) {
+		super(message ?? 'test error', detail);
 		this.retryable = false;
 	}
 }
@@ -27,7 +27,7 @@ test('can create with message and detail', function () {
 	const detail = { foo: 'bar' };
 	const error = new TestError('foo', detail);
 	assert.equal(error.message, 'foo');
-	assert.strictEqual(error.properties, detail);
+	assert.strictEqual(error.detail, detail);
 });
 
 test('can set message', function () {
@@ -47,8 +47,8 @@ test('can set code', function () {
 
 test('can set detail', function () {
 	const detail = { foo: 'bar' };
-	const error = new TestError().setProperties(detail);
-	assert.strictEqual(error.properties, detail);
+	const error = new TestError().setDetail(detail);
+	assert.strictEqual(error.detail, detail);
 });
 
 test('can set cause', function () {
@@ -63,20 +63,20 @@ test('can set retryable', function () {
 });
 
 test('can convert error to error data', function () {
-	const properties = { foo: 'bar' };
-	const error = new TestError().setProperties(properties);
+	const detail = { foo: 'bar' };
+	const error = new TestError().setDetail(detail);
 	const data: ErrorData = JSON.parse(JSON.stringify(error));
 
 	assert.equal(data.name, TestError.name);
 	assert.equal(data.message, 'test error');
 	assert.isTrue(Array.isArray(data.stack));
-	assert.isObject(data.properties);
-	assert.deepEqual(data.properties, properties);
+	assert.isObject(data.detail);
+	assert.deepEqual(data.detail, detail);
 });
 
 test('can check type', function () {
 	class FooError extends XError {};
 	const error = new FooError();
-	assert.equal(error.isType(FooError), true);
-	assert.equal(error.isType(TestError), false);
+	assert.equal(error.is(FooError), true);
+	assert.equal(error.is(TestError), false);
 });

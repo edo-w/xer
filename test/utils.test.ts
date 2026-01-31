@@ -2,25 +2,25 @@ import { assert, suite, test } from 'vitest';
 import * as utils from '~/utils.js';
 import { XError } from '~/xerror.js';
 
-suite('#getErrorProperties', function () {
+suite('#getErrorDetail', function () {
 	test('returns undefined if nil', function () {
-		assert.equal(utils.getErrorProperties(undefined), undefined);
-		assert.equal(utils.getErrorProperties(null), undefined);
+		assert.equal(utils.getErrorDetail(undefined), undefined);
+		assert.equal(utils.getErrorDetail(null), undefined);
 	});
 
-	test('can get properties from xerror', function () {
+	test('can get detail from xerror', function () {
 		class FooError extends XError { };
-		const properties = { foo: 'bar' };
-		const error = new FooError().setProperties(properties);
+		const detail = { foo: 'bar' };
+		const error = new FooError().setDetail(detail);
 
-		assert.strictEqual(utils.getErrorProperties(error), properties);
+		assert.strictEqual(utils.getErrorDetail(error), detail);
 	});
 
-	test('can get properties from error', function () {
+	test('can get detail from error', function () {
 		const error: any = new Error();
 		error.name = 'foo';
 		error.foo = 'bar';
-		const data = utils.getErrorProperties(error);
+		const data = utils.getErrorDetail(error);
 
 		assert.deepEqual(data, { foo: 'bar' });
 	});
@@ -29,11 +29,11 @@ suite('#getErrorProperties', function () {
 suite('#toErrorData', function () {
 	test('can convert error to error data', function () {
 		const error = new Error();
-		const json = utils.toErrorData(error);
+		const json = utils.getErrorData(error);
 
 		assert.equal(json.name, 'Error');
 		assert.equal(json.message, '');
-		assert.equal(json.properties, undefined);
+		assert.equal(json.detail, undefined);
 		assert.equal(json.cause, undefined);
 		assert.equal(json.id, undefined);
 		assert.isNotNaN(Date.parse(json.time));
@@ -42,11 +42,11 @@ suite('#toErrorData', function () {
 	test('can convert error with cause', function () {
 		const cause = new Error('bar');
 		const error = new Error('foo', { cause });
-		const json = utils.toErrorData(error);
+		const json = utils.getErrorData(error);
 
 		assert.equal(json.cause?.name, 'Error');
 		assert.equal(json.cause?.message, 'bar');
-		assert.equal(json.cause?.properties, undefined);
+		assert.equal(json.cause?.detail, undefined);
 		assert.equal(json.cause?.cause, undefined);
 		assert.equal(json.cause?.id, undefined);
 		assert.isNotNaN(Date.parse(json.time));
@@ -58,10 +58,10 @@ suite('#toErrorData', function () {
 		(error as any).message = undefined;
 		(error as any).stack = undefined;
 
-		const json = utils.toErrorData(error);
+		const json = utils.getErrorData(error);
 		assert.equal(json.name, '');
 		assert.equal(json.message, '');
-		assert.equal(json.properties, undefined);
+		assert.equal(json.detail, undefined);
 		assert.equal(json.cause, undefined);
 		assert.equal(json.id, undefined);
 		assert.isNotNaN(Date.parse(json.time));
@@ -96,7 +96,7 @@ suite('formattedError', function () {
 		assert.equal(error.message, 'invalid');
 	});
 
-	test('can create with properties', function () {
+	test('can create with detail', function () {
 		const error = utils.formattedError('foo', 'foo error', { foo: 'bar' });
 		assert.equal(error.name, 'foo');
 		assert.equal(error.message, 'foo error. foo=bar');
@@ -114,7 +114,7 @@ suite('messageFormat', function () {
 		assert.equal(message, 'foo bar');
 	});
 
-	test('can format message properties', function () {
+	test('can format message details', function () {
 		const message = utils.messageFormat(['foo', 'bar'], { foo: 'bar' });
 		assert.equal(message, 'foo bar. foo=bar');
 	});

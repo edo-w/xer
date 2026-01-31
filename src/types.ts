@@ -1,5 +1,22 @@
 /**
- * ErrorData is used to structure the error information so it can be easily serialized into json
+ * Represents a value that can be safetly serialized into JSON
+ */
+export type Serializable =
+	| string
+	| number
+	| boolean
+	| null
+	| Date
+	| { [key: string]: Serializable }
+	| Serializable[];
+
+/**
+ * ErrorDetail is an alias for a record of serializable values
+ */
+export type ErrorDetail = Record<string, Serializable>;
+
+/**
+ * ErrorData is used to structure error information
  */
 export interface ErrorData {
 	/**
@@ -38,9 +55,9 @@ export interface ErrorData {
 	stack: string[];
 
 	/**
-	 * error properties
+	 * error detail
 	 */
-	properties?: Record<string, any>;
+	detail?: ErrorDetail;
 
 	/**
 	 * error retryable flag

@@ -1,19 +1,7 @@
 /**
- * Represents a value that can be safetly serialized into JSON
- */
-export type Serializable =
-	| string
-	| number
-	| boolean
-	| null
-	| Date
-	| { [key: string]: Serializable }
-	| Serializable[];
-
-/**
  * ErrorDetail is an alias for a record of serializable values
  */
-export type ErrorDetail = Record<string, Serializable>;
+export type ErrorDetail = Record<string, any>;
 
 /**
  * ErrorData is used to structure error information

@@ -1,4 +1,4 @@
-import { ErrorData, ErrorDetail } from './types.js';
+import type { ErrorData, ErrorDetail } from './types.js';
 import { getErrorData, isErrorType } from './utils.js';
 
 /**
@@ -55,8 +55,8 @@ export class XError<TDetail extends ErrorDetail = ErrorDetail> extends Error {
 
 		// capturing the stack trace keeps the reference to your error class
 		// for nodejs
-		if (typeof (Error as any).captureStackTrace === 'function') {
-			(Error as any).captureStackTrace(this, this.constructor);
+		if ('captureStackTrace' in Error && typeof Error.captureStackTrace === 'function') {
+			Error.captureStackTrace(this, this.constructor);
 		}
 
 		this.detail = detail;

@@ -1,4 +1,4 @@
-import { ErrorData, ErrorDetail } from './types.js';
+import type { ErrorData, ErrorDetail } from './types.js';
 import { XError } from './xerror.js';
 
 /**
@@ -7,7 +7,7 @@ import { XError } from './xerror.js';
  * @returns object with error detail or undefined
  */
 export function getErrorDetail(error?: unknown): ErrorDetail | undefined {
-	if (error === null || error == undefined) {
+	if (error === null || error === undefined) {
 		return undefined;
 	}
 
@@ -15,11 +15,10 @@ export function getErrorDetail(error?: unknown): ErrorDetail | undefined {
 		return error.detail;
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: access error properties dynamically
 	let detail: any;
 	for (const [key, value] of Object.entries(error)) {
-		const skip = key === 'name'
-			|| key === 'message'
-			|| key === 'stack';
+		const skip = key === 'name' || key === 'message' || key === 'stack';
 
 		if (skip) {
 			continue;
@@ -38,6 +37,7 @@ export function getErrorDetail(error?: unknown): ErrorDetail | undefined {
  * @returns error data object
  */
 export function getErrorData(error: Error | unknown): ErrorData {
+	// biome-ignore lint/suspicious/noExplicitAny: access error properties dynamically
 	const errorRaw = error as any;
 	const name = errorRaw.name ?? '';
 	const message = errorRaw.message ?? '';
@@ -67,30 +67,35 @@ export function getErrorData(error: Error | unknown): ErrorData {
  * @param type error class
  * @returns true if matches, false otherwise
  */
-export function isErrorType<TType extends Error | unknown>(error: unknown | undefined | null, type: TType): error is TType {
+export function isErrorType<TError extends Error>(error: unknown | undefined | null, type: TError): error is TError {
 	if (error === null || error === undefined) {
 		return false;
 	}
 
+	//biome-ignore lint/suspicious/noExplicitAny: check for instanceof with unknown type
 	return error instanceof (type as any);
 }
 /**
-  * Creates an error instance with the given name, message and optional detail
-  * and formatted message.
-  * @param name error name
-  * @param message error reason
-  * @param detail error detail
-  * @returns error instance
-  */
+ * Creates an error instance with the given name, message and optional detail
+ * and formatted message.
+ * @param name error name
+ * @param message error reason
+ * @param detail error detail
+ * @returns error instance
+ */
 export function formattedError(name: string, message: string, detail?: ErrorDetail): Error {
 	let fields: string | undefined;
 	if (detail) {
-		fields = Object.entries(detail).map(([k, v]) => `${k}=${v}`).join(', ');
+		fields = Object.entries(detail)
+			.map(([k, v]) => `${k}=${v}`)
+			.join(', ');
 		message = `${message}. ${fields}`;
 	}
 
 	const error = new Error(message);
 	error.name = name;
+
+	// biome-ignore lint/suspicious/noExplicitAny: dynamically set detail properties
 	(error as any).detail = detail;
 
 	return error;
@@ -107,14 +112,15 @@ export function messageFormat(message: string | string[], detail?: ErrorDetail):
 	let text = '';
 	if (Array.isArray(message)) {
 		text = message.join(' ');
-	}
-	else {
+	} else {
 		text = message;
 	}
 
 	let fields: string | undefined;
 	if (detail) {
-		fields = Object.entries(detail).map(([k, v]) => `${k}=${v}`).join(', ');
+		fields = Object.entries(detail)
+			.map(([k, v]) => `${k}=${v}`)
+			.join(', ');
 		text = `${text}. ${fields}`;
 	}
 

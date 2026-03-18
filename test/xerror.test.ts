@@ -1,14 +1,15 @@
 import { assert, test } from 'vitest';
 import { XError } from '#src/xerror.js';
+import type { ErrorDetail } from '#src/types.js';
 
 class TestError extends XError {
-	constructor(message?: string, detail?: any) {
+	constructor(message?: string, detail?: ErrorDetail) {
 		super(message ?? 'test error', detail);
 		this.retryable = false;
 	}
 }
 
-test('can create', function () {
+test('can create', () => {
 	const error = new TestError();
 
 	assert.instanceOf(error, Error);
@@ -17,51 +18,51 @@ test('can create', function () {
 	assert.equal(error.message, 'test error');
 });
 
-test('can create with message', function () {
+test('can create with message', () => {
 	const error = new TestError('foo');
 	assert.equal(error.message, 'foo');
 });
 
-test('can create with message and detail', function () {
+test('can create with message and detail', () => {
 	const detail = { foo: 'bar' };
 	const error = new TestError('foo', detail);
 	assert.equal(error.message, 'foo');
 	assert.strictEqual(error.detail, detail);
 });
 
-test('can set message', function () {
+test('can set message', () => {
 	const error = new TestError().setMessage('foo');
 	assert.equal(error.message, 'foo');
 });
 
-test('can set id', function () {
+test('can set id', () => {
 	const error = new TestError().setId('123');
 	assert.equal(error.id, '123');
 });
 
-test('can set code', function () {
+test('can set code', () => {
 	const error = new TestError().setCode('XYZ');
 	assert.equal(error.code, 'XYZ');
 });
 
-test('can set detail', function () {
+test('can set detail', () => {
 	const detail = { foo: 'bar' };
 	const error = new TestError().setDetail(detail);
 	assert.strictEqual(error.detail, detail);
 });
 
-test('can set cause', function () {
+test('can set cause', () => {
 	const cause = new Error();
 	const error = new TestError().setCause(cause);
 	assert.strictEqual(error.cause, cause);
 });
 
-test('can set retryable', function () {
+test('can set retryable', () => {
 	const error = new TestError().setRetryable(false);
 	assert.equal(error.retryable, false);
 });
 
-test('can convert error to error data', function () {
+test('can convert error to error data', () => {
 	const detail = { foo: 'bar' };
 	const error = new TestError().setDetail(detail);
 	const data = error.toErrorData();
@@ -73,8 +74,8 @@ test('can convert error to error data', function () {
 	assert.deepEqual(data.detail, detail);
 });
 
-test('can check type', function () {
-	class FooError extends XError {};
+test('can check type', () => {
+	class FooError extends XError {}
 	const error = new FooError();
 	assert.equal(error.is(FooError), true);
 	assert.equal(error.is(TestError), false);

@@ -2,21 +2,21 @@ import { assert, suite, test } from 'vitest';
 import * as utils from '#src/utils.js';
 import { XError } from '#src/xerror.js';
 
-suite('#getErrorDetail', function () {
-	test('returns undefined if nil', function () {
+suite('#getErrorDetail', () => {
+	test('returns undefined if nil', () => {
 		assert.equal(utils.getErrorDetail(undefined), undefined);
 		assert.equal(utils.getErrorDetail(null), undefined);
 	});
 
-	test('can get detail from xerror', function () {
-		class FooError extends XError { };
+	test('can get detail from xerror', () => {
+		class FooError extends XError {}
 		const detail = { foo: 'bar' };
 		const error = new FooError().setDetail(detail);
 
 		assert.strictEqual(utils.getErrorDetail(error), detail);
 	});
 
-	test('can get detail from error', function () {
+	test('can get detail from error', () => {
 		const error: any = new Error();
 		error.name = 'foo';
 		error.foo = 'bar';
@@ -26,8 +26,8 @@ suite('#getErrorDetail', function () {
 	});
 });
 
-suite('#toErrorData', function () {
-	test('can convert error to error data', function () {
+suite('#toErrorData', () => {
+	test('can convert error to error data', () => {
 		const error = new Error();
 		const json = utils.getErrorData(error);
 
@@ -39,7 +39,7 @@ suite('#toErrorData', function () {
 		assert.isNotNaN(Date.parse(json.time));
 	});
 
-	test('can convert error with cause', function () {
+	test('can convert error with cause', () => {
 		const cause = new Error('bar');
 		const error = new Error('foo', { cause });
 		const json = utils.getErrorData(error);
@@ -52,7 +52,7 @@ suite('#toErrorData', function () {
 		assert.isNotNaN(Date.parse(json.time));
 	});
 
-	test('can convert empty error', function () {
+	test('can convert empty error', () => {
 		const error = new Error();
 		(error as any).name = undefined;
 		(error as any).message = undefined;
@@ -68,16 +68,16 @@ suite('#toErrorData', function () {
 	});
 });
 
-suite('#isErrorType', function () {
-	class FooError extends XError {};
-	class BarError extends XError {};
+suite('#isErrorType', () => {
+	class FooError extends XError {}
+	class BarError extends XError {}
 
-	test('nil returns false', function () {
+	test('nil returns false', () => {
 		assert.equal(utils.isErrorType(null, Error), false);
 		assert.equal(utils.isErrorType(undefined, Error), false);
 	});
 
-	test('can check type', function () {
+	test('can check type', () => {
 		const error = new Error();
 		assert.equal(utils.isErrorType(error, Error), true);
 		assert.equal(utils.isErrorType(error, FooError), false);
@@ -89,32 +89,32 @@ suite('#isErrorType', function () {
 	});
 });
 
-suite('formattedError', function () {
-	test('can create name and message', function () {
+suite('formattedError', () => {
+	test('can create name and message', () => {
 		const error = utils.formattedError('foo', 'invalid');
 		assert.equal(error.name, 'foo');
 		assert.equal(error.message, 'invalid');
 	});
 
-	test('can create with detail', function () {
+	test('can create with detail', () => {
 		const error = utils.formattedError('foo', 'foo error', { foo: 'bar' });
 		assert.equal(error.name, 'foo');
 		assert.equal(error.message, 'foo error. foo=bar');
 	});
 });
 
-suite('messageFormat', function () {
-	test('can format message', function () {
+suite('messageFormat', () => {
+	test('can format message', () => {
 		const message = utils.messageFormat('foo');
 		assert.equal(message, 'foo');
 	});
 
-	test('can format message with multiple parts', function () {
+	test('can format message with multiple parts', () => {
 		const message = utils.messageFormat(['foo', 'bar']);
 		assert.equal(message, 'foo bar');
 	});
 
-	test('can format message details', function () {
+	test('can format message details', () => {
 		const message = utils.messageFormat(['foo', 'bar'], { foo: 'bar' });
 		assert.equal(message, 'foo bar. foo=bar');
 	});

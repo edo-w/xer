@@ -1,19 +1,17 @@
 # https://lefthook.dev/configuration/
 
-# pre-commit:
-#   parallel: true
-#   jobs:
-#     - name: test
-#       run: mise exec -- pnpm test
-#       glob: "**/*.{ts,tsx,js,jsx}"
-#       exclude:
-#         - '*.config.{js,mjs}'
+pre-commit:
+  jobs:
+    - run: pnpm fmt
+    - run: pnpm lint {staged_files}
+      glob: "**/*.{ts,tsx,js,jsx}"
+      exclude: "*.config.{js,mjs}"
+    - run: pnpm test
+      glob: "**/*.{ts,tsx,js,jsx}"
+      exclude: "*.config.{js,mjs}"
 
-#     - name: lint
-#       run: mise exec -- pnpm lint-staged
-
-# commit-msg:
-#   commands:
-#     commit-lint:
-#       run: mise exec -- pnpm commitlint --edit "$1"
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit "$1"
 

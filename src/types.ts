@@ -1,6 +1,7 @@
 /**
  * ErrorDetail is an alias for a record of serializable values
  */
+// biome-ignore lint/suspicious/noExplicitAny: allow any type for error detail values
 export type ErrorDetail = Record<string, any>;
 
 /**

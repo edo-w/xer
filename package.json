@@ -11,6 +11,10 @@
   "keywords": [],
   "type": "module",
   "main": "dist/src/index.js",
+  "imports": {
+	"#src": "./dist/src/*",
+	"#test": "./dist/test/*"
+  },
   "exports": {
     ".": "./dist/src/index.js",
     "./*": "./dist/src/*"
@@ -21,7 +25,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "tsc && tsc-alias",
-    "test": "vitest",
+    "test": "vitest run",
     "cover": "vitest run --coverage",
     "coverv": "start dist/.coverage/index.html",
     "lint": "eslint  --cache --cache-location ./dist .",

@@ -1,6 +1,6 @@
 import { assert, suite, test } from 'vitest';
-import * as utils from '~/utils.js';
-import { XError } from '~/xerror.js';
+import * as utils from '#src/utils.js';
+import { XError } from '#src/xerror.js';
 
 suite('#getErrorDetail', function () {
 	test('returns undefined if nil', function () {

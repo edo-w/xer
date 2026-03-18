@@ -50,7 +50,7 @@ export class XError<TDetail extends ErrorDetail = ErrorDetail> extends Error {
 		super(message);
 		Object.setPrototypeOf(this, new.target.prototype);
 
-		this.name = this.constructor.name;
+		this.name = new.target.name;
 		this.message = message ?? '';
 
 		// capturing the stack trace keeps the reference to your error class
@@ -68,17 +68,8 @@ export class XError<TDetail extends ErrorDetail = ErrorDetail> extends Error {
 	 * Returns a copy of this instance as an {@link ErrorData} object.
 	 * @returns {ErrorData} object
 	 */
-	getData(): ErrorData {
+	toErrorData(): ErrorData {
 		return getErrorData(this);
-	}
-
-	/**
-	 * Returns a copy of this instance as an {@link ErrorData} object.
-	 * This method is called automatically when JSON.stringify() is called.
-	 * @returns {ErrorData} object
-	 */
-	toJSON(): ErrorData {
-		return this.getData();
 	}
 
 	/**

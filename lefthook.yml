@@ -4,16 +4,16 @@ pre-commit:
   parallel: true
   jobs:
     - name: test
-      run: pnpm test
+      run: mise exec -- pnpm test
       glob: "**/*.{ts,tsx,js,jsx}"
       exclude:
         - '*.config.{js,mjs}'
 
     - name: lint
-      run: pnpm lint-staged
+      run: mise exec -- pnpm lint-staged
 
 commit-msg:
   commands:
     commit-lint:
-      run: pnpm commitlint --edit "$1"
+      run: mise exec -- pnpm commitlint --edit "$1"
 

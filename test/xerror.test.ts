@@ -1,6 +1,5 @@
 import { assert, test } from 'vitest';
-import { ErrorData } from '~/types.js';
-import { XError } from '~/xerror.js';
+import { XError } from '#src/xerror.js';
 
 class TestError extends XError {
 	constructor(message?: string, detail?: any) {
@@ -65,7 +64,7 @@ test('can set retryable', function () {
 test('can convert error to error data', function () {
 	const detail = { foo: 'bar' };
 	const error = new TestError().setDetail(detail);
-	const data: ErrorData = JSON.parse(JSON.stringify(error));
+	const data = error.toErrorData();
 
 	assert.equal(data.name, TestError.name);
 	assert.equal(data.message, 'test error');

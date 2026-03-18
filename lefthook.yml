@@ -6,6 +6,7 @@ pre-commit:
     - run: pnpm lint {staged_files}
       glob: "**/*.{ts,tsx,js,jsx}"
       exclude: "*.config.{js,mjs}"
+    - run: pnpm build
     - run: pnpm test
       glob: "**/*.{ts,tsx,js,jsx}"
       exclude: "*.config.{js,mjs}"

@@ -2,6 +2,14 @@ import type { ErrorData, ErrorDetail } from './types.js';
 import { XError } from './xerror.js';
 
 /**
+ * Represents a class constructor that creates instances of `T`.
+ */
+export interface ClassType<T> {
+	// biome-ignore lint/suspicious/noExplicitAny: type for class constructor
+	new (...args: any[]): T;
+}
+
+/**
  * Get error details from a Error object excluding name, message and stack.
  * @param error error object
  * @returns object with error detail or undefined
@@ -64,16 +72,19 @@ export function getErrorData(error: Error | unknown): ErrorData {
 /**
  * Checks if an error instance is the same as the given type.
  * @param error error instance
- * @param type error class
+ * @param errorType error class
  * @returns true if matches, false otherwise
  */
-export function isErrorType<TError extends Error>(error: unknown | undefined | null, type: TError): error is TError {
+export function isErrorType<TError extends Error>(
+	error: unknown | undefined | null,
+	errorType: ClassType<TError>,
+): error is TError {
 	if (error === null || error === undefined) {
 		return false;
 	}
 
 	//biome-ignore lint/suspicious/noExplicitAny: check for instanceof with unknown type
-	return error instanceof (type as any);
+	return error instanceof (errorType as any);
 }
 /**
  * Creates an error instance with the given name, message and optional detail

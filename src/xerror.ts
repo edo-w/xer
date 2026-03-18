@@ -1,5 +1,5 @@
 import type { ErrorData, ErrorDetail } from './types.js';
-import { getErrorData, isErrorType } from './utils.js';
+import { type ClassType, getErrorData, isErrorType } from './utils.js';
 
 /**
  * Base class for "X" structure errors.
@@ -74,11 +74,11 @@ export class XError<TDetail extends ErrorDetail = ErrorDetail> extends Error {
 
 	/**
 	 * Checks if the error is the same as the given type.
-	 * @param type error type
+	 * @param errorType error type
 	 * @returns true if same, false otherwise
 	 */
-	is<TType extends Error | unknown>(type: TType): this is TType {
-		return isErrorType(this, type);
+	is<TError extends Error>(errorType: ClassType<TError>): this is TError {
+		return isErrorType(this, errorType);
 	}
 
 	/**

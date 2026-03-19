@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - uses: actions/checkout@v6.0.0
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: create pr / publish release
         uses: changesets/action@v1.7.0

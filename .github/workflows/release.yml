@@ -1,38 +1,28 @@
-name: Release
+name: release
 
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - completed
-
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+  push:
+    branches:
+      - master
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions: {}
 
 jobs:
   release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v6.0.0
-
       - uses: ./.github/actions/setup
-
-      - name: Build project
-        run: pnpm build
-
-      - name: Run tests
-        run: pnpm test
-
-      - name: Create PR / Publish Release
-        uses: changesets/action@v1.5.3
+      - name: create pr / publish release
+        uses: changesets/action@v1.7.0
         with:
-          commit: "ci: release [skip ci]"
-          publish: pnpm changeset publish
+          commit: "ci: version packages [skip ci]"
+          publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

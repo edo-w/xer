@@ -30,7 +30,8 @@
     "build": "tsc",
     "test": "vitest run",
     "cover": "vitest run --coverage",
-    "coverv": "start dist/.coverage/index.html"
+    "coverv": "start dist/.coverage/index.html",
+	"release": "biome lint && pnpm build && pnpm test && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.6",

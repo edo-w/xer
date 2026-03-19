@@ -1,5 +1,12 @@
 # @edo-w/xer
 
+## 0.4.0
+
+### Minor Changes
+
+- b03933c: Replace tsc-alias with subpath imports
+- 111983c: Fix serialization bug
+
 ## 0.3.0
 
 ### Minor Changes

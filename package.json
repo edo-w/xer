@@ -1,6 +1,6 @@
 {
   "name": "@edo-w/xer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "XER is a typescript library for creating structured errors and enchanting error handling.",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "test": "vitest run",
     "cover": "vitest run --coverage",
     "coverv": "start dist/.coverage/index.html",
-	"release": "biome lint && pnpm build && pnpm test && changeset publish"
+    "release": "biome lint && pnpm build && pnpm test && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.6",
